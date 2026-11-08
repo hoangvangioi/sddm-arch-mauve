@@ -1,0 +1,12 @@
+# OS / editor noise
+*.swp
+*~
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Qt build artifacts
+*.qmlc
+*.jsc
+qmlcache/

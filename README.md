@@ -1,176 +1,103 @@
-# sddm-astronaut-theme
+# sddm-arch-mauve
 
-![Stars](https://img.shields.io/github/stars/keyitdev/sddm-astronaut-theme?color=dd864a&labelColor=1b1b25&style=for-the-badge)
-![Forks](https://img.shields.io/github/forks/keyitdev/sddm-astronaut-theme?color=bf616a&labelColor=1b1b25&style=for-the-badge)
-[![Ko-fi](https://img.shields.io/badge/support_me_on_ko--fi-F16061?style=for-the-badge&logo=kofi&logoColor=f5f5f5)](https://ko-fi.com/keyitdev)
+A mauve twilight theme for the SDDM greeter, Qt 6 / SDDM 0.20+.
+Forked from [Keyitdev/sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme)
+`master` (`abb3163`).
 
-[sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme) is a series of themes for the [SDDM](https://github.com/sddm/sddm/) display manager made by **[Keyitdev](https://github.com/Keyitdev)**.
+![preview](preview.webp)
 
-It's written using the latest version of Qt, which is **Qt6**. Its key features include **virtual keyboard support** and an **installation script**. This theme also support **animated wallpapers**. You can easily change its appearance by choosing another of the ten pre-made themes or creating your own. Each of these themes was created by modifying just one file - **[config](./Themes/astronaut.conf)**.
+The background is an animated sky drawn in QML Canvas (`Components/MauveSky.qml`):
+an indigo → violet → mauve-pink gradient, twinkling stars and four slowly drifting
+hill layers. No image or video file, no extra Qt module.
 
-All themes were created for 1080p. However, they should work well in other resolutions.
+## Install
 
-## Preview of all themes
-
-![all_themes.gif](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/all_themes.gif?raw=true)
-
-## Preview of animated themes
-
-https://github.com/user-attachments/assets/2cfc947e-4621-4e98-b5f3-07d5e224b80c
-
-<!-- <h2><a href="https://youtu.be/4tQ56xh7wBc" target="_blank">Watch more on Youtube!</a></h2> -->
-<details>
-<summary><h2>Detailed previews</h2></summary>
-
-**Astronaut**|**Black hole**
-|:--:|:--:|
-![astronaut](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/astronaut.png?raw=true)|![black_hole](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/black_hole.png?raw=true)
-**Japanese aesthetic**|**Pixel sakura static**
-![japanese_aesthetic](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/japanese_aesthetic.png?raw=true)|![pixel_sakura_static](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/pixel_sakura_static.png?raw=true)
-**Purple leaves**|**Cyberpunk**
-![purple_leaves](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/purple_leaves.png?raw=true)|![cyberpunk](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/cyberpunk.png?raw=true)
-**Post-apocalyptic hacker**|**xxx**
-![post-apocalyptic_hacker](https://github.com/Keyitdev/screenshots/blob/master/sddm-astronaut-theme/master/post-apocalyptic_hacker.png?raw=true)|
-
-**Hyprland Kath**
-
-https://github.com/user-attachments/assets/1d926e76-44f7-4d99-ac6d-d1abcd7ed688
-
-**Pixel sakura**
-
-https://github.com/user-attachments/assets/ea004765-7e84-4a0d-90cd-aaac97679f62
-
-**Jake the dog**
-
-https://github.com/user-attachments/assets/181d48c2-f152-45f5-b568-21145be180f6
-
-</details>
-
-## Installation
-
-### Automatic Installation
-
-```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
-```
-> Works on distributions using pacman, xbps-install, dnf, zypper.   
-> Remember to always read the scripts you run from the internet.
-
-### NixOS Installation
-
-#### Using System Configuration with Custom Overrides
-
-While not officially packaged by the upstream maintainers, there is a [community-maintained package](https://search.nixos.org/packages?channel=unstable&query=sddm-astronaut#show=sddm-astronaut) maintained by @DaniD3v, @uxodb, and @qweered. You can install and customize the theme by creating an override of the package in your `configuration.nix`:
-
-```nix
-let
-  sddm-astronaut = (pkgs.sddm-astronaut.override {
-    embeddedTheme = "japanese_aesthetic";  # or any other theme
-    themeConfig = {
-      # Customize colors and settings
-      HeaderTextColor = "#d5c4a1";
-      Background = "Backgrounds/your-custom-background.png";
-      # ... other theme configuration options
-    };
-  }).overrideAttrs (oldAttrs: {
-    # Optional: Inject custom background image
-    installPhase = oldAttrs.installPhase + ''
-      chmod u+w $out/share/sddm/themes/sddm-astronaut-theme/Backgrounds/
-      cp ${./relative/path/to/your-custom-background.png} \
-        $out/share/sddm/themes/sddm-astronaut-theme/Backgrounds/your-custom-background.png
-    '';
-  });
-in
-{
-  environment.systemPackages = [ sddm-astronaut ];
-  
-  services.displayManager.sddm = {
-    enable = true;
-    package = pkgs.kdePackages.sddm;
-    extraPackages = with pkgs; [
-      kdePackages.qtmultimedia # Required for video backgrounds/audio
-    ];
-    theme = "sddm-astronaut-theme";
-  };
-}
+```bash
+git clone https://github.com/hoangvangioi/sddm-arch-mauve.git
+cd sddm-arch-mauve
+./install.sh                  # asks for sudo; --dry-run to preview, --uninstall to remove
 ```
 
-## Manual Installation
+It copies the theme to `/usr/share/sddm/themes/sddm-arch-mauve` and sets
+`[Theme] Current=sddm-arch-mauve` in `/etc/sddm.conf`, leaving the rest of that file
+alone. It never restarts SDDM — that ends your session — so apply it yourself:
 
-1. Install **dependencies**
-
-[`sddm >= 0.21.0`](https://github.com/sddm/sddm), [`qt6 >= 6.8`](https://doc.qt.io/qt-6/index.html), [`qt6-svg >= 6.8`](https://doc.qt.io/qt-6/qtsvg-index.html), [`qt6-virtualkeyboard >= 6.8`](https://doc.qt.io/qt-6/qtvirtualkeyboard-index.html), [`qt6-multimedia >= 6.8`](https://doc.qt.io/qt-6/qtmultimedia-index.html)
-
-You may also want to install additional video codecs like h.264.
-
-```sh
-sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg     # Arch
-sddm qt6-svg qt6-virtualkeyboard qt6-multimedia            # Void
-sddm qt6-qtsvg qt6-qtvirtualkeyboard qt6-qtmultimedia      # Fedora
-sddm-qt6 libQt6Svg6 qt6-virtualkeyboard qt6-virtualkeyboard-imports qt6-multimedia qt6-multimedia-imports        # OpenSUSE
-sddm qt6-svg-dev qml6-module-qtquick-virtualkeyboard qt6-multimedia-dev qml6-module-qtquick-controls qml6-module-qtquick-effects libxcb-cursor0 # Debian trixie (13.5)
+```bash
+systemctl restart sddm
 ```
 
-2. Clone this repository
-```sh
-sudo git clone -b master --depth 1 https://github.com/keyitdev/sddm-astronaut-theme.git /usr/share/sddm/themes/sddm-astronaut-theme
-```
-3. Copy fonts to `/usr/share/fonts/`
-```sh
-sudo cp -r /usr/share/sddm/themes/sddm-astronaut-theme/Fonts/* /usr/share/fonts/
-```
-4. Edit `/etc/sddm.conf`
-```sh
-echo "[Theme]
-Current=sddm-astronaut-theme" | sudo tee /etc/sddm.conf
-```
-5. Edit `/etc/sddm.conf.d/virtualkbd.conf`
-```sh
-echo "[General]
-InputMethod=qtvirtualkeyboard" | sudo tee /etc/sddm.conf.d/virtualkbd.conf
+Packages: `sddm`, `qt6-declarative` (≥ 6.5), `qt6-svg`, `qt6-multimedia`,
+`qt6-virtualkeyboard` (only if you keep the virtual keyboard; otherwise set
+`HideVirtualKeyboard="true"`). **No font package** — `Font=""` uses the system font.
+
+Or install by hand:
+
+```bash
+sudo install -d /usr/share/sddm/themes/sddm-arch-mauve
+sudo cp -r Main.qml theme.conf metadata.desktop Components Assets background.png \
+    /usr/share/sddm/themes/sddm-arch-mauve/
+# then set Current=sddm-arch-mauve under [Theme] in /etc/sddm.conf
 ```
 
-## Selecting a theme
+## Test it without logging out
 
-You can select theme by editing [metadata](./metadata.desktop) (`/usr/share/sddm/themes/sddm-astronaut-theme/metadata.desktop`).
-
-Just edit this line:
+```bash
+sddm-greeter-qt6 --test-mode --theme "$PWD"
 ```
-ConfigFile=Themes/astronaut.conf
-```
-All available configs are in [Themes](./Themes/) directory.
 
-## Previewing a theme
+The theme opens in a window of your current session. Its four power buttons are
+missing there on purpose: `--test-mode` never talks to the SDDM daemon, so
+`sddm.canPowerOff` and friends stay `false` and `Components/SystemButtons.qml` hides
+them. Set `BypassSystemButtonsChecks="true"` in `theme.conf` if you want to see them
+while testing.
 
-You can preview the set theme without logging out by runnning:
-```sh
-sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/sddm-astronaut-theme/
-```
-> Note that depending on the system configuration, the preview may differ slightly from the actual login screen.
+`preview.png` in this repository is the still shown in KDE's Login Screen settings
+(`Screenshot=preview.png` in `metadata.desktop`); `preview.webp` at the top is an
+animated WebP — one file holding many frames.
 
-## Sources
+## Configuration
 
-Initially the theme was independed fork of [MarianArlt's theme](https://github.com/MarianArlt/sddm-sugar-dark) but now the project has come a long way and started to significantly deviate from the original.
-Many of the wallpapers and fonts used in this project are very popular and copied from one user to another, so I don't know who the original creator is. 
-I also redesigned many of them, but here are links to some of the orginal artists who created these wonderful wallpapers:
+Everything is in [`theme.conf`](theme.conf). The keys that matter:
 
-- Astronaut: [wallpaper](https://wallhaven.cc/w/e76pew), [font](https://fonts.google.com/specimen/Open+Sans/about)
-- Black hole: [wallpaper](https://images2.alphacoders.com/114/1141632.jpg), [font](https://www.1001fonts.com/espacion-font.html)
-- Japanese aesthetic: [wallpaper](https://imgur.com/a/pua0dYx) by [gharly](https://www.artstation.com/gharly), [font](https://www.1001fonts.com/electroharmonix-font.html)
-- Purple leaves: [wallpaper](https://wallha.com/wallpaper/artwork-abstract-leaves-purple-texture-pattern-1414432), [font](https://fonts.google.com/specimen/Open+Sans/about)
-- Cyberpunk: [wallpaper](https://images5.alphacoders.com/133/1330479.png) by [patrika](https://alphacoders.com/users/profile/227699/patrika), [font](https://www.1001fonts.com/kognigear-font.html)
-- Post-apocalyptic hacker:  [wallpaper](https://images.alphacoders.com/137/thumb-1920-1375178.png) by [patrika](https://alphacoders.com/users/profile/227699/patrika), [font](https://www.1001fonts.com/fragile-bombers-font.html)
-- Hyprland Kath: [wallpaper](https://motionbgs.com/andvari-last-origin), [font](https://www.1001fonts.com/pixelon-font.html)
-- Pixel sakura: [wallpaper](https://imgur.com/gallery/sakura-tree-with-petals-flying-off-t5tg4N8), [font](https://www.1001fonts.com/arcadeclassic-font.html)
-- Jake the dog: [wallpaper](https://motionbgs.com/jake-the-dog), [font](https://fontmeme.com/fonts/thunderman-font/)
-  
-## Supporting project
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `Background` | `"canvas"` | The animated sky. Set a relative path (`"wallpaper.png"`, `"clip.mp4"`) to use a file instead; `background.png` in this repo is a pre-rendered still of the same sky. |
+| `StarCount` | `120` | 0–500. Lower it if the greeter feels slow. |
+| `BackgroundFps` | `30` | 5–60. ~5.8 ms per frame at 1920×1080 (≈17% of one core). |
+| `AnimationIntensity` | `normal` | `subtle` / `normal` / `strong` — how visible the motion is. |
+| `PauseBackground` | `""` | `"true"` freezes the canvas on one frame. |
+| `Font` | `""` | System default. Any family name works, but a missing font falls back silently and shifts the layout. |
+| `FormPosition` | `center` | `left` / `center` / `right`. |
+| `WarningColor` | `#f28fad` | The "login failed" text. |
+| `PartialBlur` | `true` | Blurred strip behind the form (`HaveFormBackground="false"`). |
 
-You can support me simply by dropping a **star** on **[github](https://github.com/Keyitdev/sddm-astronaut-theme)** or giving a **subscription** on **[YouTube](http://www.youtube.com/channel/UCVoGVyAP2sHPQyegwBMJKyQ?sub_confirmation=1)**.
+A background file must live inside the theme directory (the greeter runs as the
+`sddm` user and usually cannot read your home), use a plain ASCII filename and be
+readable (`644`, directory `755`). Busy image → raise `DimBackground` (0.0–1.0).
 
-If you enjoyed it and would like to show your appreciation, you can make a **[donation](https://ko-fi.com/keyitdev)** using **[kofi](https://ko-fi.com/keyitdev)**.
+## Changes from upstream
 
-[![Ko-fi](https://img.shields.io/badge/support_me_on_ko--fi-F16061?style=for-the-badge&logo=kofi&logoColor=f5f5f5)](https://ko-fi.com/keyitdev)
+* Renamed to `sddm-arch-mauve`, so it installs alongside the original.
+* New `Components/MauveSky.qml` (the animated sky), `background.png` (a still frame
+  of it) and `preview.png` (`metadata.desktop`'s `Screenshot`).
+* Dropped the 12 backgrounds (`Backgrounds/`), the 22 fonts (`Fonts/`), the 9 other
+  theme configs (`Themes/`), `Previews/`, `setup.sh` and `.github/` — one theme, one
+  config `theme.conf`, system font: about 15 MB less.
+* `install.sh` replaces upstream's 367-line `setup.sh`.
+* Fixed: `Screen.ScreenWidth` (does not exist) → `Screen.width`, and
+  `ScreenWidth`/`ScreenHeight` left empty so the theme follows the real screen
+  instead of a hard-coded 1920×1080.
+* Fixed: the "login failed" warning never cleared, because
+  `resetError.stop() && resetError.start()` never ran `start()` (`Timer.stop()`
+  returns nothing). Now `resetError.restart()`.
+* Fixed: video detection is case-insensitive, so `.MP4` plays; paths go through
+  `Qt.resolvedUrl()`.
+* Fixed: `WarningColor` was `#343746`, almost the background colour, so the error
+  text was invisible.
 
-Distributed under the **[GPLv3+](https://www.gnu.org/licenses/gpl-3.0.html) License**.    
-Copyright (C) 2022-2025 Keyitdev.
+## License
+
+GPL-3.0-or-later. Original theme © 2022-2025
+[Keyitdev](https://github.com/Keyitdev), based on
+[sddm-sugar-dark](https://github.com/MarianArlt/sddm-sugar-dark) by MarianArlt.
+Modifications © 2026 hoangvangioi.

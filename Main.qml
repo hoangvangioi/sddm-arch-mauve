@@ -15,7 +15,7 @@ Pane {
     id: root
 
     height: config.ScreenHeight || Screen.height
-    width: config.ScreenWidth || Screen.ScreenWidth
+    width: config.ScreenWidth || Screen.width
     padding: config.ScreenPadding
 
     LayoutMirroring.enabled: config.RightToLeftLayout == "true" ? true : Qt.application.layoutDirection === Qt.RightToLeft
@@ -26,7 +26,10 @@ Pane {
     palette.highlightedText: config.HighlightTextColor
     palette.buttonText: config.HoverSystemButtonsIconsColor
 
-    font.family: config.Font
+    // Empty Font means "use the system default", which needs no extra font
+    // package. Assigning "" to font.family would not do that, so the binding
+    // picks the application font explicitly in that case.
+    font.family: (config.Font || "").trim() !== "" ? config.Font : Qt.application.font.family
     font.pointSize: config.FontSize !== "" ? config.FontSize : parseInt(height / 80) || 13
 
     focus: true
@@ -51,6 +54,9 @@ Pane {
                                config.FormPosition == "right" &&
                                config.BackgroundHorizontalAlignment == "center"
 
+    // Background="canvas" draws the sky in QML instead of loading a file.
+    property bool useCanvas: (config.Background || "").toLowerCase() === "canvas"
+
     Item {
         id: sizeHelper
 
@@ -73,7 +79,6 @@ Pane {
             id: formBackground
 
             anchors.fill: form
-            anchors.centerIn: form
             z: 1
 
             color: config.FormBackgroundColor
@@ -180,6 +185,24 @@ Pane {
             ]
         }
 
+        Loader {
+            id: animatedSky
+
+            active: root.useCanvas
+            visible: root.useCanvas
+            source: "Components/MauveSky.qml"
+            asynchronous: false
+
+            // Same geometry rules as the bitmap background so switching between
+            // an image and the canvas does not move the form.
+            height: parent.height
+            width: config.HaveFormBackground == "true" && config.FormPosition != "center" && config.PartialBlur != "true" ? parent.width - formBackground.width : parent.width
+            anchors.left: leftleft || leftcenter ? formBackground.right : undefined
+            anchors.right: rightright || rightcenter ? formBackground.left : undefined
+
+            z: 0
+        }
+
         Image {
             id: backgroundPlaceholderImage
 
@@ -190,6 +213,8 @@ Pane {
 
         AnimatedImage {
             id: backgroundImage
+
+            visible: !root.useCanvas
 
             MediaPlayer {
                 id: player
@@ -235,15 +260,19 @@ Pane {
             mipmap: true
 
             Component.onCompleted:{
-                var fileType = config.Background.substring(config.Background.lastIndexOf(".") + 1)
+                var fileType = (config.Background || "").split(".").pop().toLowerCase()
                 const videoFileTypes = ["avi", "mp4", "mov", "mkv", "m4v", "webm"];
-                if (videoFileTypes.includes(fileType)) {
+                if (fileType === "canvas") {
+                    // Animated sky drawn in QML, no image or video file involved.
+                    // Visibility is handled by the useCanvas binding below.
+                }
+                else if (videoFileTypes.includes(fileType)) {
                     backgroundPlaceholderImage.visible = true;
                     player.source = Qt.resolvedUrl(config.Background)
                     player.play();
                 }
                 else{
-                    backgroundImage.source = config.background || config.Background
+                    backgroundImage.source = Qt.resolvedUrl(config.Background)
                 }
             }
         }

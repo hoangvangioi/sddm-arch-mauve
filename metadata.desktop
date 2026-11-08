@@ -1,15 +1,14 @@
 [SddmGreeterTheme]
-Name=sddm-astronaut-theme
-Description=sddm-astronaut-theme
-Author=keyitdev
-Website=https://github.com/Keyitdev/sddm-astronaut-theme
+Name=sddm-arch-mauve
+Description=Mauve twilight SDDM greeter with an animated sky (fork of sddm-astronaut-theme)
+Author=hoangvangioi
+Website=https://github.com/hoangvangioi/sddm-arch-mauve
 License=GPL-3.0-or-later
 Type=sddm-theme
 Version=1.4
-ConfigFile=Themes/astronaut.conf
-Screenshot=Previews/astronaut.png
+ConfigFile=theme.conf
 MainScript=Main.qml
-TranslationsDirectory=translations
-Theme-Id=sddm-astronaut-theme
+Screenshot=preview.png
+Theme-Id=sddm-arch-mauve
 Theme-API=2.0
 QtVersion=6

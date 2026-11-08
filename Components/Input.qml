@@ -560,7 +560,7 @@ Column {
         function onLoginSucceeded() {}
         function onLoginFailed() {
             failed = true
-            resetError.running ? resetError.stop() && resetError.start() : resetError.start()
+            resetError.restart()
         }
     }
 
